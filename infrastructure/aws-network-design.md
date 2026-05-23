@@ -56,12 +56,32 @@ Purpose:
 
 ---
 
-# Security Design
+## Security Group Design
 
-- Workers intended to remain inside private subnet.
-- Only API gateway planned for public exposure.
-- Internal communication uses private IP addresses.
-- Security groups restrict unnecessary inbound traffic.
+Two separate security groups were used in the architecture:
+
+### app-sg
+Attached to the public-facing API/Engine VM.
+
+Allowed:
+- SSH access (Port 22)
+- HTTP API access (Port 3111)
+
+Purpose:
+- Allows external access for testing the API endpoint.
+
+---
+
+### private-sg
+Attached to internal worker VMs.
+
+Allowed:
+- Internal RPC communication on Port 49134
+- Internal SSH access from the public subnet
+
+Purpose:
+- Keeps worker machines private and inaccessible from the public internet.
+- Enables secure communication between workers inside the VPC only.
 
 ---
 
