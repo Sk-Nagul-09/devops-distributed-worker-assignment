@@ -243,11 +243,43 @@ For larger models:
 - Dedicated model serving systems like vLLM or Triton Inference Server would be used
 
 ---
+# Terraform Usage
+
+## Initialize Terraform
+
+```bash
+terraform init
+```
+
+## Validate configuration
+
+```bash
+terraform validate
+```
+
+## Preview infrastructure
+
+```bash
+terraform plan
+```
+
+## Apply infrastructure
+
+```bash
+terraform apply
+```
+
+---
 
 # Current Status
 
-The distributed worker architecture and internal RPC communication were successfully tested.
+The distributed worker architecture, RPC communication, and multi-VM deployment flow were successfully tested across separate machines.
 
-Due to time and cloud cost constraints, the final API gateway integration and complete infrastructure-as-code automation were not fully completed.
+The repository includes:
+- Infrastructure planning and Terraform structure
+- Worker deployment documentation
+- Network architecture design
+- Engine and API gateway setup flow
+- Debugging notes and troubleshooting steps
 
-However, the networking, worker orchestration, debugging process, and distributed deployment flow were successfully implemented and documented.
+Due to time and cloud budget constraints, the complete production-grade deployment lifecycle was not finalized end-to-end. However, the core distributed architecture and worker communication flow were successfully validated and documented.
