@@ -43,8 +43,52 @@ The goal was to deploy workers across separate VMs and enable communication thro
 
 # Architecture Diagram
 
-(Add your screenshot here)
+<img width="726" height="320" alt="image" src="https://github.com/user-attachments/assets/b952cee8-95b6-440b-b6c9-6ef1e2f1cd65" />
 
+
+
+
+
+                        Public Internet
+                               |
+                         curl / HTTP
+                               |
+                     +----------------+
+                     |   API Gateway  |
+                     |   iii-http     |
+                     | Port: 3111     |
+                     +----------------+
+                               |
+                               | RPC / WS
+                               |
+        -------------------------------------------------
+        |               Private Subnet                  |
+        |                                               |
+        |   +------------------------+                  |
+        |   | iii-engine :49134      |                  |
+        |   +------------------------+                  |
+        |        |               |                      |
+        |        | RPC           | RPC                  |
+        |        v               v                      |
+        |  +-------------+   +----------------+         |
+        |  | math-worker |   | caller-worker  |         |
+        |  | Python      |   | TypeScript     |         |
+        |  +-------------+   +----------------+         |
+        |                                               |
+        |               +------------+                  |
+        |               | iii-state  |                  |
+        |               +------------+                  |
+        -------------------------------------------------
+
+
+## Architecture Overview
+
+- `iii-engine` acts as the RPC coordination layer between workers.
+- `caller-worker` is a TypeScript worker that receives requests and dispatches inference tasks.
+- `math-worker` is a Python worker that performs computation/inference.
+- `iii-http` exposes a public HTTP API endpoint for external access.
+- Internal worker communication happens over RPC inside the private subnet.
+- Only the HTTP API endpoint is intended to be publicly reachable.
 ---
 
 # Worker Communication Flow
@@ -87,7 +131,7 @@ The goal was to deploy workers across separate VMs and enable communication thro
 ## Start Engine
 
 ```bash
-iii run
+iii --config config.yaml
 ```
 
 ## Start Python Worker
