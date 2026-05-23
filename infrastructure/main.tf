@@ -75,16 +75,17 @@ resource "aws_route_table_association" "public_assoc" {
   route_table_id = aws_route_table.public_rt.id
 }
 
-# -----------------------------
-# Security Group
-# -----------------------------
+# -----------------------------------
+# Security Group for Public API VM
+# -----------------------------------
 
-resource "aws_security_group" "worker_sg" {
-  name   = "worker-security-group"
-  vpc_id = aws_vpc.main.id
+resource "aws_security_group" "app_sg" {
+  name        = "app-security-group"
+  description = "Allow public API and SSH access"
+  vpc_id      = aws_vpc.main.id
 
   ingress {
-    description = "SSH"
+    description = "SSH Access"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -92,7 +93,32 @@ resource "aws_security_group" "worker_sg" {
   }
 
   ingress {
-    description = "iii-engine"
+    description = "Public API Access"
+    from_port   = 3111
+    to_port     = 3111
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# -----------------------------------
+# Security Group for Private Workers
+# -----------------------------------
+
+resource "aws_security_group" "private_sg" {
+  name        = "private-worker-security-group"
+  description = "Allow internal worker communication only"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    description = "Internal RPC Communication"
     from_port   = 49134
     to_port     = 49134
     protocol    = "tcp"
@@ -100,11 +126,11 @@ resource "aws_security_group" "worker_sg" {
   }
 
   ingress {
-    description = "HTTP API"
-    from_port   = 3111
-    to_port     = 3111
+    description = "SSH from Public Subnet"
+    from_port   = 22
+    to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["10.0.1.0/24"]
   }
 
   egress {
