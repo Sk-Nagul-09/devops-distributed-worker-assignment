@@ -1,64 +1,57 @@
-# Python Worker Setup
+# API Gateway Setup
 
-## VM Purpose
+## Purpose
 
-This VM hosts the Python inference worker.
+The API gateway exposes inference functionality over HTTP.
+
+It acts as the public-facing entry point to the internal worker mesh.
+
+---
+
+# Planned Flow
+
+```text
+Client -> HTTP API -> iii-http -> iii-engine -> workers
+```
 
 ---
 
 # Setup Steps
 
-## Install dependencies
-
-```bash
-sudo apt update
-sudo apt install python3 python3-pip python3-venv -y
-```
-
-## Clone repository
-
-```bash
-git clone <repo-url>
-cd quickstart
-```
-
-## Create virtual environment
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-## Install requirements
-
-```bash
-pip install -r requirements.txt
-```
-
-## Configure engine connection
+## Configure environment
 
 ```bash
 export III_URL=ws://<ENGINE_PRIVATE_IP>:49134
 ```
 
-## Start worker
+## Start HTTP layer
 
 ```bash
-python3 inference_worker.py
+iii http
 ```
 
 ---
 
-# Validation
-
-Worker registration validated using:
+# Example API Request
 
 ```bash
-iii trigger engine::workers::list
+curl -X POST http://<PUBLIC_IP>:3111/inference \
+-H "Content-Type: application/json" \
+-d '{"prompt":"hello"}'
+```
+
+---
+
+# Expected Response
+
+```json
+{
+  "response": "Hello from inference worker"
+}
 ```
 
 ---
 
 # Notes
 
-The Python worker successfully connected to the iii-engine and exposed inference-related RPC functions.
+The HTTP gateway integration was partially tested during implementation. Internal RPC communication between workers and engine was successfully validated.
