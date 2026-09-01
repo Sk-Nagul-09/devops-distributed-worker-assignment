@@ -1,6 +1,7 @@
 # API Gateway Setup
 
-## Purpose
+ 
+## Purpose 
 
 The API gateway exposes inference functionality over HTTP.
 
